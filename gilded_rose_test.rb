@@ -13,10 +13,31 @@ class TestUntitled < Minitest::Test
   def test_backstage_pass
     assert_backstage_pass_quality(22, 8, 20)
     assert_backstage_pass_quality(23, 5, 20)
+    assert_backstage_pass_quality(0, -1, 20)
   end
 
   def assert_backstage_pass_quality(expected, sell_in, quality)
     items = [Item.new('Backstage passes to a TAFKAL80ETC concert', sell_in, quality)]
+    GildedRose.new(items).update_quality
+    assert_equal expected, items[0].quality
+  end
+
+  def test_different_item_name
+    assert_different_item_name_pass_quality(8, -1, 10)
+  end
+
+  def assert_different_item_name_pass_quality(expected, sell_in, quality)
+    items = [Item.new('Different name', sell_in, quality)]
+    GildedRose.new(items).update_quality
+    assert_equal expected, items[0].quality
+  end
+
+  def test_aged_brie
+    assert_aged_brie_pass_quality(22, 0, 20)
+  end
+
+  def assert_aged_brie_pass_quality(expected, sell_in, quality)
+    items = [Item.new('Aged Brie', sell_in, quality)]
     GildedRose.new(items).update_quality
     assert_equal expected, items[0].quality
   end
