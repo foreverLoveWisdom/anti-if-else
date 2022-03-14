@@ -12,6 +12,7 @@ class TestUntitled < Minitest::Test
 
   def test_backstage_pass
     assert_backstage_pass_quality(22, 8, 20)
+    assert_backstage_pass_quality(23, 5, 20)
   end
 
   def assert_backstage_pass_quality(expected, sell_in, quality)
