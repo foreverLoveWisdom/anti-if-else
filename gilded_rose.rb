@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Handle Logic for GildedRose
 class GildedRose
   def initialize(items)
     @items = items
@@ -8,12 +9,11 @@ class GildedRose
   def update_quality
     @items.each do |item|
       if sulfuras?(item)
-        decrease_quality(item) if item.quality.positive? && !sulfuras?(item)
-      elsif generic?(item)
-        decrease_quality(item) if item.quality.positive? && !sulfuras?(item)
+      elsif generic?(item) && item.quality.positive?
+        decrease_quality(item)
       elsif quality_less_than_50?(item)
         increase_quality(item)
-        if item.name == 'Backstage passes to a TAFKAL80ETC concert'
+        if backstage_pass?(item)
           increase_quality(item) if item.sell_in < 11 && quality_less_than_50?(item)
           increase_quality(item) if item.sell_in < 6 && quality_less_than_50?(item)
         end
