@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GildedRose
   def initialize(items)
     @items = items
@@ -5,28 +7,42 @@ class GildedRose
 
   def update_quality
     @items.each do |item|
-      if item.name != 'Aged Brie' and item.name != 'Backstage passes to a TAFKAL80ETC concert'
-        item.quality = item.quality - 1 if item.quality > 0 && (item.name != 'Sulfuras, Hand of Ragnaros')
-      elsif item.quality < 50
-        item.quality = item.quality + 1
+      if (item.name != 'Aged Brie') && (item.name != 'Backstage passes to a TAFKAL80ETC concert')
+        decrease_quality(item) if item.quality.positive? && (item.name != 'Sulfuras, Hand of Ragnaros')
+      elsif quality_less_than_50?(item)
+        increase_quality(item)
         if item.name == 'Backstage passes to a TAFKAL80ETC concert'
-          item.quality = item.quality + 1 if item.sell_in < 11 && (item.quality < 50)
-          item.quality = item.quality + 1 if item.sell_in < 6 && (item.quality < 50)
+          increase_quality(item) if item.sell_in < 11 && quality_less_than_50?(item)
+          increase_quality(item) if item.sell_in < 6 && quality_less_than_50?(item)
         end
       end
       item.sell_in = item.sell_in - 1 if item.name != 'Sulfuras, Hand of Ragnaros'
-      if item.sell_in < 0
+      if item.sell_in.negative?
         if item.name != 'Aged Brie'
           if item.name != 'Backstage passes to a TAFKAL80ETC concert'
-            item.quality = item.quality - 1 if item.quality > 0 && (item.name != 'Sulfuras, Hand of Ragnaros')
+            decrease_quality(item) if item.quality.positive? && (item.name != 'Sulfuras, Hand of Ragnaros')
           else
             item.quality = item.quality - item.quality
           end
-        elsif item.quality < 50
-          item.quality = item.quality + 1
+        elsif quality_less_than_50?(item)
+          increase_quality(item)
         end
       end
     end
+  end
+
+  private
+
+  def quality_less_than_50?(item)
+    item.quality < 50
+  end
+
+  def decrease_quality(item)
+    item.quality = item.quality - 1
+  end
+
+  def increase_quality(item)
+    item.quality = item.quality + 1
   end
 end
 
