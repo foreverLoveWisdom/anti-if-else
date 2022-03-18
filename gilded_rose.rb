@@ -9,41 +9,49 @@ class GildedRose
   def update_quality
     @items.each do |item|
       if sulfuras?(item)
-      elsif generic?(item) && item.quality.positive?
-        decrease_quality(item)
-        item.sell_in = item.sell_in - 1
-      elsif aged_brie?(item)
-        increase_quality(item) if quality_less_than_50?(item)
-        item.sell_in = item.sell_in - 1
-      elsif backstage_pass?(item)
-        increase_quality(item) if quality_less_than_50?(item)
-        increase_quality(item) if item.sell_in < 11 && quality_less_than_50?(item)
-        increase_quality(item) if item.sell_in < 6 && quality_less_than_50?(item)
-        item.sell_in = item.sell_in - 1
-      end
-
-      if aged_brie?(item)
-        if item.sell_in.negative?
-          if quality_less_than_50?(item)
-            increase_quality(item)
-          end
-        end
-      elsif backstage_pass?(item)
-        if item.sell_in.negative?
-          item.quality = item.quality - item.quality
-        end
-      elsif sulfuras?(item)
       elsif generic?(item)
-        if item.sell_in.negative?
-          if item.quality.positive?
-            decrease_quality(item)
-          end
-        end
+        handle_generic(item)
+      elsif aged_brie?(item)
+        handle_aged_brie(item)
+      elsif backstage_pass?(item)
+        handle_backstage_pass(item)
       end
     end
   end
 
   private
+
+  def handle_backstage_pass(item)
+    increase_quality(item) if quality_less_than_50?(item)
+    increase_quality(item) if item.sell_in < 11 && quality_less_than_50?(item)
+    increase_quality(item) if item.sell_in < 6 && quality_less_than_50?(item)
+    item.sell_in = item.sell_in - 1
+    if item.sell_in.negative?
+      item.quality = item.quality - item.quality
+    end
+  end
+
+  def handle_aged_brie(item)
+    increase_quality(item) if quality_less_than_50?(item)
+    item.sell_in = item.sell_in - 1
+    if item.sell_in.negative?
+      if quality_less_than_50?(item)
+        increase_quality(item)
+      end
+    end
+  end
+
+  def handle_generic(item)
+    if item.quality.positive?
+      decrease_quality(item)
+      item.sell_in = item.sell_in - 1
+      if item.sell_in.negative?
+        if item.quality.positive?
+          decrease_quality(item)
+        end
+      end
+    end
+  end
 
   def generic?(item)
     !(sulfuras?(item) || backstage_pass?(item) || aged_brie?(item))
