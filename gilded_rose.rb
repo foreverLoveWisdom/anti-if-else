@@ -23,14 +23,16 @@ class GildedRose
       end
 
       if item.sell_in.negative?
-        if !aged_brie?(item)
+        if aged_brie?(item)
+          if quality_less_than_50?(item)
+            increase_quality(item)
+          end
+        else
           if backstage_pass?(item)
             item.quality = item.quality - item.quality
           elsif item.quality.positive? && !sulfuras?(item)
             decrease_quality(item)
           end
-        elsif quality_less_than_50?(item)
-          increase_quality(item)
         end
       end
     end
