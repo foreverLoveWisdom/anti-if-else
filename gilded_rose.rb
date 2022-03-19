@@ -2,6 +2,23 @@
 
 # Handle Logic for GildedRose
 class GildedRose
+  class Generic
+    attr_reader :quality, :sell_in
+
+    def initialize(quality, sell_in)
+      @quality = quality
+      @sell_in = sell_in
+    end
+
+    def update
+      if @quality.positive?
+        @quality -= 1
+        @sell_in -= 1
+        @quality -= 1 if @sell_in.negative? && @quality.positive?
+      end
+    end
+  end
+
   def initialize(items)
     @items = items
   end
@@ -10,31 +27,20 @@ class GildedRose
     @items.each do |item|
       if sulfuras?(item)
       elsif generic?(item)
-        if item.quality.positive?
-          item.quality = item.quality - 1
-          item.sell_in = item.sell_in - 1
-          if item.sell_in.negative?
-            if item.quality.positive?
-              item.quality = item.quality - 1
-            end
-          end
-        end
+        generic = Generic.new(item.quality, item.sell_in)
+        generic.update
+        item.quality = generic.quality
+        item.sell_in = generic.sell_in
       elsif aged_brie?(item)
         item.quality = item.quality + 1 if item.quality < 50
         item.sell_in = item.sell_in - 1
-        if item.sell_in.negative?
-          if item.quality < 50
-            item.quality = item.quality + 1
-          end
-        end
+        item.quality = item.quality + 1 if item.sell_in.negative? && (item.quality < 50)
       elsif backstage_pass?(item)
         item.quality = item.quality + 1 if item.quality < 50
         item.quality = item.quality + 1 if item.sell_in < 11 && item.quality < 50
         item.quality = item.quality + 1 if item.sell_in < 6 && item.quality < 50
         item.sell_in = item.sell_in - 1
-        if item.sell_in.negative?
-          item.quality = item.quality - item.quality
-        end
+        item.quality = item.quality - item.quality if item.sell_in.negative?
       end
     end
   end
@@ -56,7 +62,6 @@ class GildedRose
   def aged_brie?(item)
     item.name == 'Aged Brie'
   end
-
 end
 
 class Item
