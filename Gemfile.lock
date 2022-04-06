@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (11.1.3)
     coderay (1.1.3)
     docile (1.4.0)
     ffi (1.15.5)
@@ -31,6 +32,9 @@ GEM
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    pry-byebug (3.8.0)
+      byebug (~> 11.0)
+      pry (~> 0.10)
     rb-fsevent (0.11.1)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -52,6 +56,7 @@ DEPENDENCIES
   guard (~> 2.18)
   guard-minitest (~> 2.4, >= 2.4.6)
   minitest (~> 5.15)
+  pry-byebug
   simplecov (~> 0.21.2)
   terminal-notifier
   terminal-notifier-guard

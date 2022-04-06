@@ -1,64 +1,99 @@
+require 'pry-byebug'
 # frozen_string_literal: true
 
 module Inventory
+  class Quality
+    attr_reader :amount
+
+    def initialize(amount)
+      @amount = amount
+    end
+
+    def degrade
+      @amount -= 1 if amount.positive?
+    end
+
+    def increase
+      @amount += 1 if amount < 50
+    end
+
+    def reset
+      @amount = 0
+    end
+  end
+
   class Generic
-    attr_reader :quality, :sell_in
+    attr_reader :sell_in
 
     def initialize(quality, sell_in)
-      @quality = quality
+      @quality = Quality.new(quality)
       @sell_in = sell_in
     end
 
     def update
-      if @quality.positive?
-        @quality -= 1
-        @sell_in -= 1
-        @quality -= 1 if @sell_in.negative? && @quality.positive?
-      end
+      @quality.degrade
+      @sell_in -= 1
+      @quality.degrade if @sell_in.negative?
+    end
+
+    def quality
+      @quality.amount
     end
   end
 
   class AgedBrie
-    attr_reader :quality, :sell_in
+    attr_reader :sell_in
 
     def initialize(quality, sell_in)
-      @quality = quality
+      @quality = Quality.new(quality)
       @sell_in = sell_in
     end
 
     def update
-      @quality += 1 if @quality < 50
+      @quality.increase
       @sell_in -= 1
-      @quality += 1 if @sell_in.negative? && (@quality < 50)
+      @quality.increase if @sell_in.negative?
+    end
+
+    def quality
+      @quality.amount
     end
   end
 
   class BackstagePass
-    attr_reader :quality, :sell_in
+    attr_reader :sell_in
 
     def initialize(quality, sell_in)
-      @quality = quality
+      @quality = Quality.new(quality)
       @sell_in = sell_in
     end
 
     def update
-      @quality += 1 if @quality < 50
-      @quality += 1 if @sell_in < 11 && @quality < 50
-      @quality += 1 if @sell_in < 6 && @quality < 50
+      @quality.increase
+      @quality.increase if @sell_in < 11
+      @quality.increase if @sell_in < 6
       @sell_in -= 1
-      @quality -= @quality if @sell_in.negative?
+      @quality.reset if @sell_in.negative?
+    end
+
+    def quality
+      @quality.amount
     end
   end
 
   class Sulfuras
-    attr_reader :quality, :sell_in
+    attr_reader :sell_in
 
     def initialize(quality, sell_in)
-      @quality = quality
+      @quality = Quality.new(quality)
       @sell_in = sell_in
     end
 
     def update; end
+
+    def quality
+      @quality.amount
+    end
   end
 end
 
