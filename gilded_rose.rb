@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pry-byebug'
 # frozen_string_literal: true
 
@@ -80,8 +82,6 @@ module Inventory
       @quality.amount
     end
   end
-
-
 end
 
 # Handle Logic for GildedRose
@@ -121,9 +121,9 @@ class GildedRose
       good = GoodCategory.new.build_for(item)
       next if sulfuras?(item)
 
+      item.sell_in -= 1
       good.update
       item.quality = good.quality
-      item.sell_in = good.sell_in
     end
   end
 
